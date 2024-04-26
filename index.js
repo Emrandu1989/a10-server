@@ -45,6 +45,14 @@ async function run() {
         res.send(result)
          
       })
+       
+      app.get('/crafts/:id', async(req, res)=>{
+          const id = req.params.id;
+          const query = {_id: new ObjectId(id)};
+          const result = await craftCollection.findOne(query);
+          res.send(result)
+      })
+
 
       app.post('/crafts', async(req, res)=>{
              const crafts = req.body;
@@ -53,12 +61,7 @@ async function run() {
              res.send(result)
       })
 
-      app.put('/crafts/:id', async(req, res)=>{
-           const id = req.params.id;
-           const updatedProduct = req.body;
-           console.log(updatedProduct);
-
-      })
+      
 
       app.delete('/crafts/:id', async(req, res)=>{
         const id = req.params.id;

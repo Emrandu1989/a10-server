@@ -29,51 +29,71 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    // await client.connect();
+    await client.connect();
 
-      const craftCollection = client.db("Art&CraftDB").collection('art&Craft')
+    const craftCollection = client.db("Art&CraftDB").collection('art&Craft')
 
-      app.get('/crafts', async(req, res)=>{
-           const cursor = craftCollection.find();
-           const result = await cursor.toArray();
-           res.send(result)
-      })
+    app.get('/crafts', async (req, res) => {
+      const cursor = craftCollection.find();
+      const result = await cursor.toArray();
+      res.send(result)
+    })
 
-      app.get('/crafts/:email', async(req, res) =>{
-        console.log(req.params.email);
-        const result = await craftCollection.find({email:req.params.email}).toArray();
-        res.send(result)
-         
-      })
-       
-      app.get('/crafts/:id', async(req, res)=>{
-          const id = req.params.id;
-          const query = {_id: new ObjectId(id)};
-          const result = await craftCollection.findOne(query);
-          res.send(result)
-      })
+    app.get('/crafts/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await craftCollection.findOne(query);
+      res.send(result)
+    })
 
 
-      app.post('/crafts', async(req, res)=>{
-             const crafts = req.body;
-             console.log(crafts)
-             const result = await craftCollection.insertOne(crafts);
-             res.send(result)
-      })
 
-      
+  
 
-      app.delete('/crafts/:id', async(req, res)=>{
-        const id = req.params.id;
-        const query = {_id: new ObjectId(id)};
-        const result  = await craftCollection.deleteOne(query);
-        res.send(result);
-      })
+
+    app.post('/crafts', async (req, res) => {
+      const crafts = req.body;
+      console.log(crafts)
+      const result = await craftCollection.insertOne(crafts);
+      res.send(result)
+    })
+
+    app.put('/crafts/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updateItem = req.body;
+      const item = {
+        $set: {
+          ItemName: updateItem.ItemName,
+          Subcategory_Name: updateItem.Subcategory_Name,
+          UserName: updateItem.UserName,
+          email: updateItem.email,
+          Customization: updateItem.Customization,
+          Processing_time: updateItem.Processing_time,
+          StockStatus: updateItem.StockStatus,
+          Price: updateItem.Price,
+          Ratings: updateItem.Ratings,
+          ImageUrl: updateItem.ImageUrl,
+          Description: updateItem.Description,
+        }
+      }
+      const result = await craftCollection.updateOne(filter, item, options)
+    })
+
+
+
+    app.delete('/crafts/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await craftCollection.deleteOne(query);
+      res.send(result);
+    })
 
 
 
     // Send a ping to confirm a successful connection
-    // await client.db("admin").command({ ping: 1 });
+    await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
@@ -84,11 +104,11 @@ run().catch(console.dir);
 
 
 
-app.get('/', (req, res)=>{
-    res.send('J&W Store Server is Running')
+app.get('/', (req, res) => {
+  res.send('J&W Store Server is Running')
 })
 
 
-app.listen(port, ()=>{
-    console.log(`J&W Server is Running on PORT: ${port}`)
+app.listen(port, () => {
+  console.log(`J&W Server is Running on PORT: ${port}`)
 })

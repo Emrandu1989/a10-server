@@ -79,6 +79,7 @@ async function run() {
         }
       }
       const result = await craftCollection.updateOne(filter, item, options)
+      res.send(result);
     })
 
 

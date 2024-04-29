@@ -32,9 +32,15 @@ async function run() {
     // await client.connect();
     
     const craftCollection = client.db("Art&CraftDB").collection('art&Craft')
+    const SCollection = client.db("Art&CraftDB").collection('S')
 
     app.get('/crafts', async (req, res) => {
       const cursor = craftCollection.find();
+      const result = await cursor.toArray();
+      res.send(result)
+    })
+    app.get('/s', async (req, res) => {
+      const cursor = SCollection.find();
       const result = await cursor.toArray();
       res.send(result)
     })
